@@ -10,10 +10,15 @@ from Cura.util.meshLoaders import stl
 from Cura.util.meshLoaders import obj
 from Cura.util.meshLoaders import dae
 from Cura.util.meshLoaders import amf
+from Cura.util.meshLoaders import assimp
 
 def loadSupportedExtensions():
+	if assimp.supported:
+		assimp_extensions = assimp.loadSupportedExtensions()
+	else:
+		assimp_extensions = []
 	""" return a list of supported file extensions for loading. """
-	return ['.stl', '.obj', '.dae', '.amf']
+	return list(set(['.stl', '.obj', '.dae', '.amf'] + assimp_extensions))
 
 def saveSupportedExtensions():
 	""" return a list of supported file extensions for saving. """
@@ -27,6 +32,15 @@ def loadMeshes(filename):
 	AMF can contain whole scenes of objects with each object having multiple meshes.
 	DAE files are a mess, but they can contain scenes of objects as well as grouped meshes
 	"""
+	if assimp.supported:
+		try:
+			# First, try to load it using assimp
+			return assimp.loadMeshes(filename)
+		except:
+			import traceback
+			traceback.print_exc()
+			pass
+
 	ext = os.path.splitext(filename)[1].lower()
 	if ext == '.stl':
 		return stl.loadScene(filename)
