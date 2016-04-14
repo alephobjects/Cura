@@ -1,7 +1,7 @@
 """
 Assimp file mesh loader.
 """
-
+import numpy
 from Cura.util import printableObject
 
 supported = False
@@ -166,7 +166,61 @@ def print_scene_info(filename, scene):
 		print("	   hint:" + str(texture.achformathint))
 		print("	   data (size):" + str(len(texture.data)))
 
-def loadMeshNodeRecursive(filename, scene, node):
+def countMeshFacesNodeRecursive(count, scene, node):
+	children = node.contents.mChildren[0:node.contents.mNumChildren]
+	meshes = node.contents.mMeshes[0:node.contents.mNumMeshes]
+	if len(meshes) > 0:
+		for mesh_id in meshes:
+			mesh = scene.meshes[mesh_id]
+			if mesh.mPrimitiveTypes == 4: # Triangles
+				count += mesh.mNumFaces
+
+	for child in children:
+		count = countMeshFacesNodeRecursive(count, scene, child)
+
+	return count
+
+def loadMeshNodeRecursive(m, scene, node):
+	name = str(node.contents.mName.data)
+	children = node.contents.mChildren[0:node.contents.mNumChildren]
+	meshes = node.contents.mMeshes[0:node.contents.mNumMeshes]
+	transformation = node.contents.mTransformation
+
+	print "Loading meshes from node %s" % (name)
+	if len(meshes) > 0:
+		#obj = printableObject.printableObject(filename)
+		#obj._name = str(name)
+		for mesh_id in meshes:
+			mesh = scene.meshes[mesh_id]
+			if mesh.mPrimitiveTypes == 4: # Triangles
+				#m = obj._addMesh()
+				#m._prepareFaceCount(mesh.mNumFaces)
+				print "Node has %d faces" % mesh.mNumFaces
+				#vertices = numpy.matrix(mesh.vertices) * numpy.matrix(self._obj._matrix, numpy.float32)).getA()
+				#return (numpy.matrix(self.vertexes, copy = False) * numpy.matrix(self._obj._matrix, numpy.float32)).getA()
+				vertices = numpy.zeros((mesh.mNumFaces*3, 4), numpy.float32)
+				for i in xrange(len(mesh.vertices)):
+					vertices[i] = list(mesh.vertices[i]) + [1]
+				#print mesh.vertices
+				#print vertices
+				transMatrix = [[transformation.a1, transformation.a2, transformation.a3, transformation.a4],
+							   [transformation.b1, transformation.b2, transformation.b3, transformation.b4],
+							   [transformation.c1, transformation.c2, transformation.c3, transformation.c4],
+							   [transformation.d1, transformation.d2, transformation.d3, transformation.d4]]
+				vertices = (numpy.matrix(vertices, copy = False) * numpy.matrix(transMatrix, numpy.float32)).getA()
+				#print vertices
+				#vertices = mesh.vertices
+				for face in mesh.mFaces[0:mesh.mNumFaces]:
+					v1 = vertices[face.mIndices[0]]
+					v2 = vertices[face.mIndices[1]]
+					v3 = vertices[face.mIndices[2]]
+					m._addFace(v1[0], v1[1], v1[2], v2[0], v2[1], v2[2], v3[0], v3[1], v3[2])
+
+
+	for child in children:
+		loadMeshNodeRecursive(m, scene, child)
+
+def loadMeshNodeRecursive2(filename, scene, node):
 	name = str(node.contents.mName.data)
 	children = node.contents.mChildren[0:node.contents.mNumChildren]
 	meshes = node.contents.mMeshes[0:node.contents.mNumMeshes]
@@ -181,19 +235,56 @@ def loadMeshNodeRecursive(filename, scene, node):
 			if mesh.mPrimitiveTypes == 4: # Triangles
 				m = obj._addMesh()
 				m._prepareFaceCount(mesh.mNumFaces)
-				print "Node has %d faces" % mesh.mNumFaces
+				print "Mesh has %d faces" % mesh.mNumFaces
+				vertices = mesh.vertices
 				for face in mesh.mFaces[0:mesh.mNumFaces]:
-					v1 = mesh.vertices[face.mIndices[0]]
-					v2 = mesh.vertices[face.mIndices[1]]
-					v3 = mesh.vertices[face.mIndices[2]]
+					v1 = vertices[face.mIndices[0]]
+					v2 = vertices[face.mIndices[1]]
+					v3 = vertices[face.mIndices[2]]
 					m._addFace(v1[0], v1[1], v1[2], v2[0], v2[1], v2[2], v3[0], v3[1], v3[2])
-				obj._postProcessAfterLoad()
-				ret.append(obj)
+		obj._postProcessAfterLoad()
+		ret.append(obj)
 
 
 	for child in children:
-		ret = ret + loadMeshNodeRecursive(filename, scene, child)
-		print "Ret is : %s" % str(ret)
+		ret = ret + loadMeshNodeRecursive2(filename, scene, child)
+
+	return ret
+
+def loadMeshNodeRecursive3(filename, scene, node):
+	name = str(node.contents.mName.data)
+	children = node.contents.mChildren[0:node.contents.mNumChildren]
+	meshes = node.contents.mMeshes[0:node.contents.mNumMeshes]
+
+	print "Loading meshes 3 from node %s" % (name)
+	ret = []
+	if len(meshes) > 0:
+		obj = printableObject.printableObject(filename)
+		obj._name = str(name)
+		numFaces = 0
+		for mesh_id in meshes:
+			mesh = scene.meshes[mesh_id]
+			if mesh.mPrimitiveTypes == 4: # Triangles
+				numFaces += mesh.mNumFaces
+		m = obj._addMesh()
+		m._prepareFaceCount(numFaces)
+		print "Node has %d total faces" % numFaces
+		for mesh_id in meshes:
+			mesh = scene.meshes[mesh_id]
+			if mesh.mPrimitiveTypes == 4: # Triangles
+				print "Node has %d faces" % mesh.mNumFaces
+				vertices = mesh.vertices
+				for face in mesh.mFaces[0:mesh.mNumFaces]:
+					v1 = vertices[face.mIndices[0]]
+					v2 = vertices[face.mIndices[1]]
+					v3 = vertices[face.mIndices[2]]
+					m._addFace(v1[0], v1[1], v1[2], v2[0], v2[1], v2[2], v3[0], v3[1], v3[2])
+		obj._postProcessAfterLoad()
+		ret.append(obj)
+
+
+	for child in children:
+		ret = ret + loadMeshNodeRecursive3(filename, scene, child)
 
 	return ret
 
@@ -205,7 +296,19 @@ def loadMeshes(filename):
 
 	print_scene_info(filename, scene)
 
-	ret = loadMeshNodeRecursive(filename, scene, scene.mRootNode)
+	if True:
+		obj = printableObject.printableObject(filename)
+		m = obj._addMesh()
+		faces = countMeshFacesNodeRecursive(0, scene, scene.mRootNode)
+		print "Total faces : %d" % faces
+		m._prepareFaceCount(faces)
+		loadMeshNodeRecursive(m, scene, scene.mRootNode)
+		obj._postProcessAfterLoad()
+		ret = [obj]
+	elif False:
+		ret = loadMeshNodeRecursive2(filename, scene, scene.mRootNode)
+	else:
+		ret = loadMeshNodeRecursive3(filename, scene, scene.mRootNode)
 
 	# Finally release the model
 	pyassimp.release(scene)
