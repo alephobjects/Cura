@@ -162,7 +162,7 @@ fi
 #############################
 
 gitClone "https://code.alephobjects.com/diffusion/CBD/cura-binary-data.git" _cura_binary_data
-
+rm -vf resources/firmware/*.hex
 cp -v _cura_binary_data/cura/resources/firmware/* resources/firmware/
 
 #############################
