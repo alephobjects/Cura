@@ -39,12 +39,25 @@ if sys.platform.startswith('win'):
 
 elif sys.platform.startswith('darwin'):
 	import objc
-	bundle = objc.initFrameworkWrapper("IOKit",
-	frameworkIdentifier="com.apple.iokit",
-	frameworkPath=objc.pathForFramework("/System/Library/Frameworks/IOKit.framework"),
-	globals=globals())
+	from Foundation import *
+	bundle = None
+	if hasattr(objc, 'ObjCLazyModule'):
+		objc.ObjCLazyModule("IOKit",
+                                       frameworkIdentifier="com.apple.iokit",
+                                       frameworkPath=objc.pathForFramework(
+                                           "/System/Library/Frameworks/IOKit.framework"
+                                       ),
+									   metadict=globals())
+		bundle = NSBundle.bundleWithPath_(objc.pathForFramework('/System/Library/Frameworks/IOKit.framework'))
+	else:
+		bundle = objc.initFrameworkWrapper("IOKit",
+		frameworkIdentifier="com.apple.iokit",
+		frameworkPath=objc.pathForFramework("/System/Library/Frameworks/IOKit.framework"),
+		globals=globals())
+
 	foo = objc.loadBundleFunctions(bundle, globals(), [("IOPMAssertionCreateWithName", b"i@I@o^I")])
 	foo = objc.loadBundleFunctions(bundle, globals(), [("IOPMAssertionRelease", b"iI")])
+
 	def preventComputerFromSleeping(frame, prevent):
 		if prevent:
 			success, preventComputerFromSleeping.assertionID = IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, "Cura is printing", None)
@@ -205,7 +218,7 @@ class printWindowPlugin(wx.Frame):
 		text.SetBounds(0, 300)
 		text.SetPosition((x_text, y_text))
 		text.SetSize((w_text, h_text))
-		
+
 		button = wx.Button(self, -1, _(button_text))
 		button.SetPosition((x_button, y_button))
 		button.SetSize((w_button, h_button))
@@ -1042,7 +1055,7 @@ class printWindowAdvanced(wx.Frame):
 			self._addTermLog('< %s\n' % (extraInfo))
 
 		self._updateButtonStates()
-		
+
 		info = connection.getStatusString()
 		isPrinting = connection.isPrinting() or connection.isPaused()
 		if isPrinting:
