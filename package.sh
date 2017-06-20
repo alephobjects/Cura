@@ -172,6 +172,102 @@ cp -v _cura_binary_data/cura/resources/firmware/* resources/firmware/
 if [ "$BUILD_TARGET" = "darwin" ]; then
     TARGET_DIR=Cura-${BUILD_VERSION}-MacOS
 
+  SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+  CURA_PREFIX_DIR=${CURA_PREFIX_DIR:="/Users/buildbot"}
+
+
+  CURA_VIRT_DIR="$CURA_PREFIX_DIR/cura-virtual"
+
+  WX_PREFIX_DIR=${WX_PREFIX_DIR:="$CURA_VIRT_DIR"}
+
+  WX_CONFIG_DIR="$WX_PREFIX_DIR/bin/wx-config"
+
+  cd "$CURA_PREFIX_DIR"
+
+  sudo brew install git
+  sudo brew install curl
+
+  if [ -d "$CURA_VIRT_DIR" ]; then
+    rm -rf "$CURA_VIRT_DIR"
+  fi
+
+  mkdir -p "$CURA_VIRT_DIR"
+
+  sudo easy_install pip
+  sudo easy_install virtualenv
+
+  virtualenv "$CURA_VIRT_DIR"
+
+  export PS1="(cura-virtual)"
+  . $CURA_VIRT_DIR/bin/activate
+
+  # Download and build wxPython
+  curl -L "http://sourceforge.net/projects/wxpython/files/wxPython/3.0.2.0/wxPython-src-3.0.2.0.tar.bz2" -o "wxPython-src-3.0.2.0.tar.bz2"
+  echo " *** wxPython downloaded"
+  tar -xjf wxPython-src-3.0.2.0.tar.bz2
+
+  cd wxPython-src-3.0.2.0
+  echo  " *** Downloading patches..."
+  curl -L "https://raw.githubusercontent.com/Homebrew/formula-patches/bbf4995/wxmac/patch-yosemite.diff" -o "patch-yosemite.diff"
+  curl -L "https://raw.githubusercontent.com/Homebrew/formula-patches/bbf4995/wxmac/patch-quicktime-removal.diff" -o "patch-quicktime-removal.diff"
+  curl -L "http://trac.wxwidgets.org/raw-attachment/ticket/16959/wxPaperCustomPatch.patch" -o "wxPaperCustomPatch.patch"
+
+  echo " *** Applying patches..."
+  git apply patch-yosemite.diff
+  git apply patch-quicktime-removal.diff
+  git apply wxPaperCustomPatch.patch
+  echo "     Done."
+
+  ./configure CFLAGS='-msse2 -mno-sse3 -mno-sse4' \
+              CXXFLAGS='-msse2 -mno-sse3 -mno-sse4' \
+              --disable-debug \
+              --enable-clipboard \
+              --enable-display \
+              --enable-dnd \
+              --enable-monolithic \
+              --enable-optimise \
+              --enable-std_string \
+              --enable-svg \
+              --enable-unicode \
+              --enable-universal_binary=i386,x86_64 \
+              --enable-webkit \
+              --prefix=$WX_PREFIX_DIR \
+              --with-expat \
+              --with-libjpeg=builtin \
+              --with-libpng=builtin \
+              --with-libtiff=builtin \
+              --with-macosx-version-min=10.6 \
+              --with-opengl \
+              --with-osx_cocoa \
+              --with-zlib=builtin
+  make -j4 install
+
+  cd wxPython
+  python setup.py build_ext BUILD_GIZMOS=1 \
+                            BUILD_GLCANVAS=1 \
+                            BUILD_STC=1 \
+                            INSTALL_MULTIVERSION=0 \
+                            UNICODE=1 \
+                            WX_CONFIG=$WX_CONFIG_DIR \
+                            WXPORT=osx_cocoa
+
+  python setup.py install --prefix=$CURA_VIRT_DIR \
+                          BUILD_GIZMOS=1 \
+                          BUILD_GLCANVAS=1 \
+                          BUILD_STC=1 \
+                          INSTALL_MULTIVERSION=0 \
+                          UNICODE=1 \
+                          WX_CONFIG=$WX_CONFIG_DIR \
+                          WXPORT=osx_cocoa
+
+  cd $SCRIPT_DIR # Cura source dir
+
+  pip install -r requirements_darwin.txt
+
+  #############################
+
+
 	rm -rf scripts/darwin/build
 	rm -rf scripts/darwin/dist
 
@@ -531,7 +627,7 @@ if [ $BUILD_TARGET = "win32" ]; then
 	rm -rf wxPython3.0-win32-3.0.2.0
 	rm -rf pyserial-2.7
 	rm -rf Win32
-	
+
 	#For windows extract portable python to include it.
 	extract PortablePython_${WIN_PORTABLE_PY_VERSION}.exe App
 	extract PyOpenGL-3.0.1.win32.exe PURELIB
@@ -562,7 +658,7 @@ if [ $BUILD_TARGET = "win32" ]; then
 	mv Win32/EjectMedia.exe ${TARGET_DIR}/Cura/
 	cp -a scripts/win32/nsisPlugins/libgcc_s_dw2-1.dll ${TARGET_DIR}
 	cp -a scripts/win32/nsisPlugins/libstdc++-6.dll ${TARGET_DIR}
-	
+
 	rm -rf Power/
 	rm -rf App
 	rm -rf PURELIB
