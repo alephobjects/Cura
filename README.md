@@ -255,3 +255,19 @@ Ensure that virtualenv is activated, so ```python``` points to the python of you
 Note that application is only guaranteed to work on Mac OS X version used to build and higher, but may not support lower versions.
 E.g. Cura built on 10.8 will work on 10.8 and 10.7, but not on 10.6. In other hand, Cura built on 10.6 will work on 10.6, 10.7 and 10.8.
 
+
+##Package Cura using package.sh scripts
+
+Prerequisites:
+
+ * Make sure you have installed homebrew (https://brew.sh/).
+ * Make sure you have python2 installed
+
+Then you can build Cura using the following command:
+```
+./package.sh darwin
+```
+You can tweak the build using the following ENV variables:
+
+ * **CURA_PREFIX_DIR** (Defaults to /Users/buildbot) - home directory of Cura virtual env.
+ * **WX_PREFIX_DIR** (Defaults to $CURA_PREFIX_DIR/cura-virtual) - wxPython prefix directory. This directory should contain $WX_PREFIX_DIR/bin/wx-config for the wx config.
