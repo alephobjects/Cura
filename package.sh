@@ -185,17 +185,11 @@ if [ "$BUILD_TARGET" = "darwin" ]; then
 
   cd "$CURA_PREFIX_DIR"
 
-  sudo brew install git
-  sudo brew install curl
-
   if [ -d "$CURA_VIRT_DIR" ]; then
     rm -rf "$CURA_VIRT_DIR"
   fi
 
   mkdir -p "$CURA_VIRT_DIR"
-
-  sudo easy_install pip
-  sudo easy_install virtualenv
 
   virtualenv "$CURA_VIRT_DIR"
 
