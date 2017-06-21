@@ -208,9 +208,9 @@ if [ "$BUILD_TARGET" = "darwin" ]; then
   curl -L "http://trac.wxwidgets.org/raw-attachment/ticket/16959/wxPaperCustomPatch.patch" -o "wxPaperCustomPatch.patch"
 
   echo " *** Applying patches..."
-  git apply patch-yosemite.diff
-  git apply patch-quicktime-removal.diff
-  git apply wxPaperCustomPatch.patch
+  patch -p1 < patch-yosemite.diff
+  patch -p1 < patch-quicktime-removal.diff
+  patch -p1 < wxPaperCustomPatch.patch
   echo "     Done."
 
   ./configure CFLAGS='-msse2 -mno-sse3 -mno-sse4' \
