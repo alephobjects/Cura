@@ -71,6 +71,7 @@ material_map = {
 	"PP-Matte-HT-PLA": "protopasta-high-temp-PLA",
 	"silk": "silk",
 	"linen": "linen",
+	"ic3d-ABS": "ic3d-ABS",
 	
 	# Advanced
 	"Alloy910": "alloy910",
@@ -133,7 +134,6 @@ material_map = {
 	"brassfill": "colorfabb-metal-filled",
 	"ABS_scaffold": "ABS-scaffold-support",
 	"HIPS_scaffold": "HIPS-scaffold-support",
-	"ic3d-ABS": "ic3d-ABS"
 }
 
 material_order = {
@@ -159,6 +159,7 @@ material_order = {
 	"PP-Matte-HT-PLA":     20,
 	"silk":                21,
 	"linen":               22,
+	"ic3d-ABS":            23,
 	
 	# Advanced
 	"INOVA-1800":          50,
@@ -221,7 +222,6 @@ material_order = {
 	"brassfill":         5008,
 	"ABS_scaffold":      5009,
 	"HIPS_scaffold":     5010,
-	"ic3d-ABS":          5011
 }
 
 material_types = {
@@ -246,6 +246,7 @@ material_types = {
 	"PP-Matte-HT-PLA": "Intermediate",
 	"silk": "Intermediate",
 	"linen": "Intermediate",
+	"ic3d-ABS": "Intermediate",
 	
 	# Advanced
 	"Alloy910": "Advanced",
@@ -325,6 +326,7 @@ material_names = {
 	"PP-Matte-HT-PLA": "Matte Fiber HTPLA (Proto-pasta)",
 	"silk": "BioFila Silk (twoBEars)",
 	"linen": "BioFila Linen (twoBEars)",
+	"ic3d-ABS": "ABS (IC3D)",
 	
 	# Advanced
 	"Alloy910": "Alloy 910 (Taulman)",
@@ -387,7 +389,6 @@ material_names = {
 	"brassfill": "brassFill (colorFabb)",
 	"ABS_scaffold": "ABS & Scaffold Support",
 	"HIPS_scaffold": "HIPS & Scaffold Support",
-	"ic3d-ABS": "ABS (IC3D)"
 }
 
 material_url = {
@@ -459,7 +460,7 @@ material_url = {
 	"linen": "lulzbot.com/store/filament/biofila-linen",
 #	"ABS_scaffold": "",
 #	"HIPS_scaffold": "",
-#	"ic3d-ABS": ""
+	"ic3d-ABS": "lulzbot.com/store/filament/IC3D-ABS",
 }
 
 bed_prep_materials = {
