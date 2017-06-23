@@ -99,6 +99,7 @@ material_map = {
 	"ninjaflex": "ninjaflex",
 	"cheetah": "cheetah",
 	"semiflex": "semiflex",
+	"polyflex": "polyflex",
 
 	# Dual extruder (Expert)
 	"PLA_PVA": "PLA-PVA-support",
@@ -129,7 +130,6 @@ material_map = {
 	#Experimental
 	"b-pet": "b-pet",
 	"wood-bamboo": "woodFill-bambooFill",
-	"polyflex": "polyflex",
 	"armadillo": "armadillo",
 	"brassfill": "colorfabb-metal-filled",
 	"ABS_scaffold": "ABS-scaffold-support",
@@ -187,6 +187,7 @@ material_order = {
 	"ninjaflex":            0,
 	"cheetah":              1,
 	"semiflex":             2,
+	"polyflex":             3,
 	
 	# Dual extruder (Expert)
 	"PLA_PLA":             20,
@@ -217,7 +218,6 @@ material_order = {
 	#Experimental
 	"b-pet":             5002,
 	"wood-bamboo":       5004,
-	"polyflex":          5006,
 	"armadillo":         5007,
 	"brassfill":         5008,
 	"ABS_scaffold":      5009,
@@ -272,6 +272,7 @@ material_types = {
 	"ninjaflex": "Expert",
 	#"cheetah": "Expert",
 	"semiflex": "Expert",
+	"polyflex": "Expert",
 		
 	# Dual extruder (Expert)
 	"PLA_PVA": "Expert",
@@ -354,6 +355,7 @@ material_names = {
 	"ninjaflex": "NinjaFlex (NinjaTek)",
 	"cheetah": "Cheetah (NinjaTek)",
 	"semiflex": "SemiFlex (NinjaTek)",
+	"polyflex": "PolyFlex (Polymaker)",
 	
 	# Dual extruder (Expert)
 	"PLA_PVA": "PLA & PVA Support",
@@ -384,7 +386,6 @@ material_names = {
 	# Experimental
 	"b-pet": "B-Pet",
 	"wood-bamboo": "WoodFill & BambooFill",
-	"polyflex": "PolyFlex (Polymaker)",
 	"armadillo": "Armadillo (NinjaTek)",
 	"brassfill": "brassFill (colorFabb)",
 	"ABS_scaffold": "ABS & Scaffold Support",
@@ -453,7 +454,7 @@ material_url = {
 #	"b-pet": "",
 #	"PC-MAX": "",
 #	"wood-bamboo": "",
-#	"polyflex": "",
+	"polyflex": "lulzbot.com/store/filament/polyflex",
 #	"armadillo": "",
 #	"brassfill": "",
 	"silk": "lulzbot.com/store/filament/biofila-silk",
