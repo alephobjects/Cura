@@ -287,6 +287,9 @@ if [ "$BUILD_TARGET" = "darwin" ]; then
 	mkdir -p dist/Cura.app/Contents/Library/QuickLook
 	cp -a STLQuickLook.qlgenerator dist/Cura.app/Contents/Library/QuickLook/
 
+	# Fix python symlink
+	ln -sf /usr/bin/python dist/Cura.app/Contents/MacOS/python
+
 	# Archive app
 	cd dist
 	$TAR cfp - Cura.app | gzip --best -c > ../../../${TARGET_DIR}.tar.gz
