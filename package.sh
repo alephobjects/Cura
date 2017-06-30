@@ -652,6 +652,7 @@ if [ $BUILD_TARGET = "win32" ]; then
 	mv Win32/EjectMedia.exe ${TARGET_DIR}/Cura/
 	cp -a scripts/win32/nsisPlugins/libgcc_s_dw2-1.dll ${TARGET_DIR}
 	cp -a scripts/win32/nsisPlugins/libstdc++-6.dll ${TARGET_DIR}
+	cp -a scripts/win32/nsisPlugins/libwinpthread-1.dll ${TARGET_DIR}
 
 	rm -rf Power/
 	rm -rf App
