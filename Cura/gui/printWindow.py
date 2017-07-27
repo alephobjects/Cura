@@ -524,6 +524,9 @@ class printWindowBasic(wx.Frame):
 	def OnPowerWarningChange(self, e):
 		if self.powerManagement is None:
 			return
+		# Disabling power warning for MAC for now
+		if sys.platform.startswith('darwin'):
+			return
 		type = self.powerManagement.get_providing_power_source_type()
 		if type == power.POWER_TYPE_AC and self.powerWarningText.IsShown():
 			self.powerWarningText.Hide()
@@ -804,6 +807,9 @@ class printWindowAdvanced(wx.Frame):
 
 	def OnPowerWarningChange(self, e):
 		if self.powerManagement is None:
+			return
+		# Disabling power warning for MAC for now
+		if sys.platform.startswith('darwin'):
 			return
 		type = self.powerManagement.get_providing_power_source_type()
 		if type == power.POWER_TYPE_AC and self.powerWarningText.IsShown():
