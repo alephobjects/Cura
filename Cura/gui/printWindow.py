@@ -489,7 +489,7 @@ class printWindowBasic(wx.Frame):
 
 		self.pauseTimer = wx.Timer(self)
 		self.Bind(wx.EVT_TIMER, self.OnPauseTimer, self.pauseTimer)
-		#if not sys.platform.startswith('darwin'):
+
 		self.sizer.Add(self.powerWarningText, pos=(0, 0), span=(1, 5), flag=wx.EXPAND|wx.BOTTOM, border=5)
 		self.sizer.Add(self.statsText, pos=(1, 0), span=(1, 5), flag=wx.LEFT, border=5)
 		self.sizer.Add(self.connectButton, pos=(2, 0))
@@ -522,15 +522,12 @@ class printWindowBasic(wx.Frame):
 			self._printerConnection.openActiveConnection()
 
 	def OnPowerWarningChange(self, e):
-		# Disabling power warning for MAC for now
-		if sys.platform.startswith('darwin'):
+		if self.powerManagement is None:
 			self.powerWarningText.Hide()
 			self.panel.Layout()
 			self.Layout()
 			self.Fit()
 			self.Refresh()
-			return
-		if self.powerManagement is None:
 			return
 		type = self.powerManagement.get_providing_power_source_type()
 		if type == power.POWER_TYPE_AC and self.powerWarningText.IsShown():
@@ -752,7 +749,6 @@ class printWindowAdvanced(wx.Frame):
 		self.Bind(wx.EVT_TEXT_ENTER, self.OnTermEnterLine, self._termInput)
 		self._termInput.Bind(wx.EVT_CHAR, self.OnTermKey)
 
-		# if not sys.platform.startswith('darwin'):
 		self.topsizer.Add(self.powerWarningText, pos=(0, 0), span=(1, 6), flag=wx.EXPAND|wx.BOTTOM, border=5)
 		self.topsizer.Add(self.connectButton, pos=(1, 0), flag=wx.LEFT, border=2)
 		self.topsizer.Add(self.printButton, pos=(1, 1), flag=wx.LEFT, border=2)
@@ -812,15 +808,12 @@ class printWindowAdvanced(wx.Frame):
 		self.Destroy()
 
 	def OnPowerWarningChange(self, e):
-		# Disabling power warning for MAC for now
-		if sys.platform.startswith('darwin'):
+		if self.powerManagement is None:
 			self.powerWarningText.Hide()
 			self.toppanel.Layout()
 			self.Layout()
 			self.Fit()
 			self.Refresh()
-			return
-		if self.powerManagement is None:
 			return
 		type = self.powerManagement.get_providing_power_source_type()
 		if type == power.POWER_TYPE_AC and self.powerWarningText.IsShown():
