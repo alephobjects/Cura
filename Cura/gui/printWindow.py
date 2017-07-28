@@ -489,8 +489,8 @@ class printWindowBasic(wx.Frame):
 
 		self.pauseTimer = wx.Timer(self)
 		self.Bind(wx.EVT_TIMER, self.OnPauseTimer, self.pauseTimer)
-		if not sys.platform.startswith('darwin'):
-			self.sizer.Add(self.powerWarningText, pos=(0, 0), span=(1, 5), flag=wx.EXPAND|wx.BOTTOM, border=5)
+		#if not sys.platform.startswith('darwin'):
+		self.sizer.Add(self.powerWarningText, pos=(0, 0), span=(1, 5), flag=wx.EXPAND|wx.BOTTOM, border=5)
 		self.sizer.Add(self.statsText, pos=(1, 0), span=(1, 5), flag=wx.LEFT, border=5)
 		self.sizer.Add(self.connectButton, pos=(2, 0))
 		#self.sizer.Add(self.loadButton, pos=(2,1))
@@ -522,8 +522,6 @@ class printWindowBasic(wx.Frame):
 			self._printerConnection.openActiveConnection()
 
 	def OnPowerWarningChange(self, e):
-		if self.powerManagement is None:
-			return
 		# Disabling power warning for MAC for now
 		if sys.platform.startswith('darwin'):
 			self.powerWarningText.Hide()
@@ -531,6 +529,8 @@ class printWindowBasic(wx.Frame):
 			self.Layout()
 			self.Fit()
 			self.Refresh()
+			return
+		if self.powerManagement is None:
 			return
 		type = self.powerManagement.get_providing_power_source_type()
 		if type == power.POWER_TYPE_AC and self.powerWarningText.IsShown():
@@ -752,8 +752,8 @@ class printWindowAdvanced(wx.Frame):
 		self.Bind(wx.EVT_TEXT_ENTER, self.OnTermEnterLine, self._termInput)
 		self._termInput.Bind(wx.EVT_CHAR, self.OnTermKey)
 
-		if not sys.platform.startswith('darwin'):
-			self.topsizer.Add(self.powerWarningText, pos=(0, 0), span=(1, 6), flag=wx.EXPAND|wx.BOTTOM, border=5)
+		# if not sys.platform.startswith('darwin'):
+		self.topsizer.Add(self.powerWarningText, pos=(0, 0), span=(1, 6), flag=wx.EXPAND|wx.BOTTOM, border=5)
 		self.topsizer.Add(self.connectButton, pos=(1, 0), flag=wx.LEFT, border=2)
 		self.topsizer.Add(self.printButton, pos=(1, 1), flag=wx.LEFT, border=2)
 		self.topsizer.Add(self.cancelButton, pos=(1, 2), flag=wx.LEFT, border=2)
@@ -812,8 +812,6 @@ class printWindowAdvanced(wx.Frame):
 		self.Destroy()
 
 	def OnPowerWarningChange(self, e):
-		if self.powerManagement is None:
-			return
 		# Disabling power warning for MAC for now
 		if sys.platform.startswith('darwin'):
 			self.powerWarningText.Hide()
@@ -821,6 +819,8 @@ class printWindowAdvanced(wx.Frame):
 			self.Layout()
 			self.Fit()
 			self.Refresh()
+			return
+		if self.powerManagement is None:
 			return
 		type = self.powerManagement.get_providing_power_source_type()
 		if type == power.POWER_TYPE_AC and self.powerWarningText.IsShown():
